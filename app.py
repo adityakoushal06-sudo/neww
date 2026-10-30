@@ -127,7 +127,7 @@ PAGES = [
             "The way you care about the little things.",
             "How you believe in me.",
             "Your terrible jokes that I still laugh at.",
-            "Your long messages and your voice notes.",
+            "Your voice. It's my favourite sound in the whole world.",
             "How brave you are, even when you're scared.",
             "The hug I'm saving for the day we finally meet.",
             "How you make me want to be better.",
@@ -556,6 +556,18 @@ HTML = r"""
   /* ═════════ VIDEO FRAME ═════════ */
   .polaroid.vid{width:auto;display:inline-block;max-width:84%}
   .polaroid.vid video{display:block;width:auto;max-width:100%;height:clamp(200px,34vh,260px);margin:0 auto;border-radius:15px;background:#3f0618}
+  /* ═════════ BALLOON SHOOTING ═════════ */
+  .balloons{flex-wrap:wrap;row-gap:0}
+  .bhint{flex:0 0 100%;text-align:center;font-family:'Caveat',cursive;font-size:21px;color:#7a3550;animation:pulse 2s ease-in-out infinite}
+  .balloon{cursor:crosshair}
+  .balloon.respawn{animation:brise 1s cubic-bezier(.2,1.4,.4,1) both,bloat 3.4s ease-in-out 1s infinite}
+  .balloon.popped,.balloon.respawn.popped{animation:bpop .28s ease-out forwards;pointer-events:none}
+  @keyframes bpop{0%{transform:scale(1)}30%{transform:scale(1.4)}100%{transform:scale(0);opacity:0}}
+  @keyframes brise{from{transform:translateY(160px) scale(.4);opacity:0}to{transform:none;opacity:1}}
+  .finale{position:fixed;left:50%;top:42%;z-index:200;pointer-events:none;text-align:center;width:86vw;max-width:520px;transform:translate(-50%,-50%)}
+  .finale b{display:block;font-family:'Great Vibes',cursive;font-weight:400;font-size:clamp(46px,13vw,72px);color:#fff;
+    text-shadow:0 0 18px #e11d5a,0 0 36px #e11d5a,0 0 60px #e8b74a;line-height:1.1}
+  .finale span{display:block;font-family:'Caveat',cursive;font-size:clamp(24px,7vw,34px);color:#fff1b8;text-shadow:0 0 14px #e11d5a;margin-top:6px}
 </style>
 </head>
 <body>
@@ -681,7 +693,7 @@ function buntingSVG() {
   return '<svg viewBox="0 0 400 64" preserveAspectRatio="none"><path d="M-4 5 Q200 44 404 5" fill="none" stroke="#a8741a" stroke-width="2" stroke-linecap="round"/>' + f + '</svg>';
 }
 function balloonSVG(c) {
-  return '<svg viewBox="0 0 50 110" width="40"><path d="M25 52 Q16 72 25 88 T25 108" fill="none" stroke="#c9b3bb" stroke-width="1.5"/>' +
+  return '<svg viewBox="0 0 50 110" width="54"><path d="M25 52 Q16 72 25 88 T25 108" fill="none" stroke="#c9b3bb" stroke-width="1.5"/>' +
     '<ellipse cx="25" cy="26" rx="19" ry="24" fill="' + c + '"/><path d="M21 49 L25 55 L29 49z" fill="' + c + '"/>' +
     '<ellipse cx="17.5" cy="17" rx="4.5" ry="8" fill="#fff" fill-opacity=".45" transform="rotate(18 17.5 17)"/></svg>';
 }
@@ -776,6 +788,103 @@ function confettiShower(ms = 3500) {
       spawnHeart(Math.random() * innerWidth, innerHeight + 10,
         { size: 16 + Math.random() * 32, rise: innerHeight * (.7 + Math.random() * .6), dur: 2800 + Math.random() * 1800 });
   }, 120);
+}
+
+/* ───────── balloon shooting ───────── */
+const NOTES = ['I love you ♡', 'আমি তোমাকে ভালোবাসি', 'my little goblin', 'happy birthday!'];
+const BCOLORS = ['#e11d5a', '#e8b74a', '#ff85a8', '#e11d5a'];
+let actx = null;
+function audioCtx() { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); return actx; }
+function shotSound() {
+  try {
+    const a = audioCtx(), t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(1400, t); o.frequency.exponentialRampToValueAtTime(260, t + .2);
+    g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .22);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + .23);
+  } catch (e) {}
+}
+function popSound() {
+  try {
+    const a = audioCtx(), t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'triangle'; o.frequency.setValueAtTime(520, t); o.frequency.exponentialRampToValueAtTime(80, t + .13);
+    g.gain.setValueAtTime(.4, t); g.gain.exponentialRampToValueAtTime(.001, t + .15);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + .16);
+    const len = Math.floor(a.sampleRate * .09), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const n = a.createBufferSource(), ng = a.createGain(); n.buffer = buf; ng.gain.value = .45;
+    n.connect(ng); ng.connect(a.destination); n.start(t);
+  } catch (e) {}
+}
+function shoot(fx0, fy0, tx, ty, done) {
+  const s = document.createElement('div');
+  s.style.cssText = 'position:absolute;left:0;top:0;width:60px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#fff1b8);box-shadow:0 0 14px #e8b74a,0 0 4px #fff';
+  fx.appendChild(s);
+  const ang = Math.atan2(ty - fy0, tx - fx0);
+  s.animate([
+    { transform: 'translate(' + fx0 + 'px,' + fy0 + 'px) rotate(' + ang + 'rad)' },
+    { transform: 'translate(' + tx + 'px,' + ty + 'px) rotate(' + ang + 'rad)' }
+  ], { duration: 230, easing: 'cubic-bezier(.5,0,1,1)', fill: 'forwards' }).onfinish = () => { s.remove(); done(); };
+}
+function ringAt(x, y, color) {
+  const r = document.createElement('div');
+  r.style.cssText = 'position:absolute;left:0;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid ' + color + ';box-shadow:0 0 16px ' + color;
+  fx.appendChild(r);
+  r.animate([
+    { transform: 'translate(' + x + 'px,' + y + 'px) scale(.2)', opacity: 1 },
+    { transform: 'translate(' + x + 'px,' + y + 'px) scale(6)', opacity: 0 }
+  ], { duration: 650, easing: 'ease-out' }).onfinish = () => r.remove();
+}
+function confettiAt(x, y, n, color) {
+  const cols = [color, '#ffd166', '#fff', '#ff85a8', '#f1c766', '#ffb3c8'];
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div'), w = 5 + Math.random() * 7;
+    c.style.cssText = 'position:absolute;left:0;top:0;width:' + w + 'px;height:' + (w * 1.7) + 'px;border-radius:2px;background:' + cols[(Math.random() * cols.length) | 0];
+    fx.appendChild(c);
+    const a = Math.random() * Math.PI * 2, d = 70 + Math.random() * 190, rot = Math.random() * 900;
+    const mx = x + Math.cos(a) * d, my = y + Math.sin(a) * d;
+    c.animate([
+      { transform: 'translate(' + x + 'px,' + y + 'px) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + mx + 'px,' + my + 'px) rotate(' + rot * .5 + 'deg)', opacity: 1, offset: .4 },
+      { transform: 'translate(' + (mx + (Math.random() - .5) * 60) + 'px,' + (my + 160 + Math.random() * 140) + 'px) rotate(' + rot + 'deg)', opacity: 0 }
+    ], { duration: 1300 + Math.random() * 900, easing: 'cubic-bezier(.2,.6,.4,1)' }).onfinish = () => c.remove();
+  }
+}
+function noteAt(x, y, text) {
+  const t = document.createElement('div');
+  t.textContent = text;
+  const cx = Math.max(90, Math.min(innerWidth - 90, x));
+  t.style.cssText = 'position:absolute;left:0;top:0;white-space:nowrap;font-family:"DM Serif Display","Noto Serif Bengali",serif;font-size:24px;color:#fff;' +
+    'text-shadow:0 0 10px #e11d5a,0 0 22px #e11d5a,0 2px 0 #a3123f;pointer-events:none';
+  fx.appendChild(t);
+  t.animate([
+    { transform: 'translate(' + cx + 'px,' + y + 'px) translate(-50%,-50%) scale(.3)', opacity: 0 },
+    { transform: 'translate(' + cx + 'px,' + (y - 40) + 'px) translate(-50%,-50%) scale(1.25)', opacity: 1, offset: .25 },
+    { transform: 'translate(' + cx + 'px,' + (y - 130) + 'px) translate(-50%,-50%) scale(1)', opacity: 0 }
+  ], { duration: 2100, easing: 'ease-out' }).onfinish = () => t.remove();
+}
+function shakeStage() {
+  const stg = document.querySelector('.stage');
+  stg.classList.remove('shake'); void stg.offsetWidth; stg.classList.add('shake');
+  setTimeout(() => stg.classList.remove('shake'), 750);
+}
+function balloonFinale(onDone) {
+  confettiRain(170);
+  confettiShower(3800);
+  [0, 350, 700, 1050, 1400, 1750].forEach(ms => setTimeout(() => {
+    const x = innerWidth * (.15 + Math.random() * .7), y = innerHeight * (.15 + Math.random() * .45);
+    ringAt(x, y, Math.random() > .5 ? '#e8b74a' : '#ff4d88');
+    confettiAt(x, y, 30, '#ff4d88'); burst(x, y, 14); shakeStage(); popSound();
+  }, ms));
+  const f = document.createElement('div');
+  f.className = 'finale';
+  f.innerHTML = '<b>you did it ♡</b><span>every balloon was my love for you</span>';
+  document.body.appendChild(f);
+  f.animate([
+    { opacity: 0, transform: 'translate(-50%,-50%) scale(.2) rotate(-8deg)' },
+    { opacity: 1, transform: 'translate(-50%,-50%) scale(1.15) rotate(2deg)', offset: .2 },
+    { opacity: 1, transform: 'translate(-50%,-50%) scale(1) rotate(0)', offset: .8 },
+    { opacity: 0, transform: 'translate(-50%,-50%) scale(1.3)' }
+  ], { duration: 3800, easing: 'ease-out' }).onfinish = () => { f.remove(); onDone(); };
 }
 
 /* ───────── build pages ───────── */
@@ -888,8 +997,29 @@ DATA.pages.forEach((pg, i) => {
   } else if (pg.type === 'welcome') {
     page.appendChild(paragraphs(pg.text, 3));
     const bl = el('div', 'balloons reveal'); bl.style.setProperty('--i', 8);
-    ['#e11d5a', '#e8b74a', '#ff85a8', '#e11d5a'].forEach(c => {
-      const b = el('div', 'balloon'); b.innerHTML = balloonSVG(c); bl.appendChild(b);
+    bl.appendChild(el('div', 'bhint', 'tap the balloons to shoot them \u2661'));
+    const bEls = [];
+    let popped = 0, busy = false;
+    BCOLORS.forEach((c, n) => {
+      const b = el('div', 'balloon'); b.innerHTML = balloonSVG(c); bl.appendChild(b); bEls.push(b);
+      b.addEventListener('pointerdown', () => {
+        if (b.classList.contains('popped') || busy) return;
+        b.classList.add('popped');
+        const r = b.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * .28;
+        shotSound();
+        shoot(innerWidth / 2, innerHeight + 10, cx, cy, () => {
+          popSound(); ringAt(cx, cy, c); confettiAt(cx, cy, 36, c); burst(cx, cy, 16);
+          noteAt(cx, cy, NOTES[n % NOTES.length]); shakeStage();
+          popped++;
+          if (popped === BCOLORS.length) {
+            busy = true;
+            setTimeout(() => balloonFinale(() => {
+              bEls.forEach(x => { x.classList.remove('popped'); x.classList.add('respawn'); });
+              popped = 0; busy = false;
+            }), 500);
+          }
+        });
+      });
     });
     page.appendChild(bl);
   } else if (pg.type === 'bengali') {
