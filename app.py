@@ -1183,13 +1183,11 @@ function show(n) {
   }
 
   const LIPS =
-    '<svg viewBox="0 0 100 64" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0" stop-color="#e63a6e"/><stop offset="1" stop-color="#b8143f"/></linearGradient></defs>' +
-    '<path d="M3 33 C14 24 24 14 36 12 C42 11 46 14 50 18 C54 14 58 11 64 12 C76 14 86 24 97 33 C84 37.5 66 38.5 50 38.5 C34 38.5 16 37.5 3 33 Z" fill="url(#lg)"/>' +
-    '<path d="M4 34.5 C20 38.5 36 39.5 50 39.5 C64 39.5 80 38.5 96 34.5 C87 52 70 61 50 61 C30 61 13 52 4 34.5 Z" fill="url(#lg)"/>' +
-    '<g stroke="#ffb7cc" stroke-opacity=".22" stroke-width=".9" stroke-linecap="round" fill="none">' +
-    '<path d="M4 34 C22 39 38 40 50 40 C62 40 78 39 96 34" stroke="#8f0d39" stroke-opacity=".45" stroke-width="1.4"/><path d="M24 28 L26 35"/><path d="M36 22 L37 34"/><path d="M64 22 L63 34"/><path d="M76 28 L74 35"/>' +
-    '<path d="M28 44 L30 52"/><path d="M42 45 L43 56"/><path d="M58 45 L57 56"/><path d="M72 44 L70 52"/></g></svg>';
+    '<svg viewBox="0 0 100 90" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#ff7aa5"/><stop offset="1" stop-color="#e2245f"/></linearGradient></defs>' +
+    '<path d="M50 85 C20 62 4 45 4 27 C4 13 15 4 28 4 C38 4 46 9 50 17 C54 9 62 4 72 4 C85 4 96 13 96 27 C96 45 80 62 50 85 Z" fill="url(#lg)"/>' +
+    '<g stroke="#fff" stroke-opacity=".16" stroke-width="1.3" stroke-linecap="round" fill="none"><path d="M26 34 L30 52"/><path d="M40 28 L42 58"/><path d="M60 28 L58 58"/><path d="M74 34 L70 52"/></g>' +
+    '<ellipse cx="29" cy="22" rx="9" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 29 22)"/></svg>';
 
   function kissSound() {
     try {
@@ -1203,26 +1201,27 @@ function show(n) {
   function kisses() {
     const W = innerWidth, H = innerHeight, land = W > H;
     const cols = land ? 3 : 2, rows = land ? 2 : 3, cw = W / cols, ch = H / rows;
-    const lw = Math.min(cw * 1.5, (ch * 1.55) / .64, 460);
+    const lw = Math.min(W, H) * (land ? .42 : .46);
     const layer = document.createElement('div'); layer.id = 'kiss';
     const wash = document.createElement('div'); wash.className = 'wash'; wash.style.opacity = 0;
     layer.appendChild(wash); document.body.appendChild(layer);
     const D = 3200, STEP = 110;
-    wash.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1, offset: .68 }, { opacity: 0 }],
+    wash.animate([{ opacity: 0 }, { opacity: .7, offset: .3 }, { opacity: .7, offset: .68 }, { opacity: 0 }],
       { duration: D, easing: 'ease-in-out', fill: 'forwards' });
+    burst(W / 2, H / 2, 22);
     const order = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - .5);
     order.forEach((cell, i) => {
       const c = cell % cols, r = Math.floor(cell / cols) % rows;
-      const x = c * cw + cw / 2 - lw / 2 + (Math.random() - .5) * cw * .12;
-      const y = r * ch + ch / 2 - lw * .32 + (Math.random() - .5) * ch * .1;
-      const rot = (Math.random() - .5) * 36;
+      const x = c * cw + cw / 2 - lw / 2 + (Math.random() - .5) * cw * .3;
+      const y = r * ch + ch / 2 - lw * .45 + (Math.random() - .5) * ch * .16;
+      const rot = (Math.random() - .5) * 44;
       const d = document.createElement('div'); d.className = 'lip';
-      d.style.cssText = 'width:' + lw + 'px;height:' + lw * .64 + 'px;left:' + x + 'px;top:' + y + 'px';
+      d.style.cssText = 'width:' + lw + 'px;height:' + lw * .9 + 'px;left:' + x + 'px;top:' + y + 'px';
       d.innerHTML = LIPS; layer.appendChild(d);
       d.animate([
         { opacity: 0, transform: 'scale(.86) rotate(' + rot + 'deg)' },
-        { opacity: .94, transform: 'scale(1) rotate(' + rot + 'deg)', offset: .25 },
-        { opacity: .94, transform: 'scale(1.02) rotate(' + rot + 'deg)', offset: .7 },
+        { opacity: .88, transform: 'scale(1) rotate(' + rot + 'deg)', offset: .25 },
+        { opacity: .88, transform: 'scale(1.02) rotate(' + rot + 'deg)', offset: .7 },
         { opacity: 0, transform: 'scale(1.06) rotate(' + rot + 'deg)' }
       ], { duration: D, delay: i * STEP, easing: 'ease-in-out', fill: 'both' });
       setTimeout(kissSound, i * STEP + 80);
