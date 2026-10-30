@@ -1,6 +1,8 @@
 import base64
 import json
 import mimetypes
+import time
+import urllib.request
 from pathlib import Path
 
 import streamlit as st
@@ -254,9 +256,7 @@ st.markdown(
             radial-gradient(1px 1px at 210px 30px, rgba(255,230,200,.8), transparent),
             radial-gradient(1px 1px at 150px 230px, rgba(255,255,255,.7), transparent),
             radial-gradient(1px 1px at 250px 180px, rgba(190,220,255,.8), transparent),
-            /* ringed planet + moon glow */
-            radial-gradient(circle 46px at 91% 90%, #ffe2b8 0%, #d98a6a 45%, #6a2c58 78%, transparent 80%),
-            radial-gradient(circle 120px at 91% 90%, rgba(255,160,130,.20), transparent 70%),
+            /* moon glow */
             radial-gradient(circle 26px at 9% 9%, #fffbe8 0%, #e9e2c8 55%, transparent 58%),
             radial-gradient(circle 90px at 9% 9%, rgba(255,250,220,.18), transparent 70%),
             /* nebula clouds */
@@ -271,7 +271,7 @@ st.markdown(
         background-size:
             180px 180px, 230px 230px, 260px 260px, 200px 200px, 300px 300px,
             340px 340px, 280px 280px, 360px 360px, 420px 420px, 380px 380px,
-            auto, auto, auto, auto, auto, auto, auto, auto, auto, auto;
+            auto, auto, auto, auto, auto, auto, auto, auto;
     }}
     .stApp::before {{
         content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -309,6 +309,66 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# ---- real satellite imagery in the background (NASA) ----
+@st.cache_data(ttl=1800, show_spinner=False)
+def latest_earth():
+    """Newest full-disc photo of Earth from NASA's DSCOVR/EPIC satellite.
+    Raises on failure so a hiccup is never cached."""
+    req = urllib.request.Request(
+        "https://epic.gsfc.nasa.gov/api/natural", headers={"User-Agent": "Mozilla/5.0"}
+    )
+    with urllib.request.urlopen(req, timeout=8) as r:
+        items = json.load(r)
+    last = max(items, key=lambda i: i["date"])
+    y, m, d = last["date"][:10].split("-")
+    return {
+        "url": f"https://epic.gsfc.nasa.gov/archive/natural/{y}/{m}/{d}/jpg/{last['image']}.jpg",
+        "when": last["date"][:16] + " UTC",
+    }
+
+
+try:
+    earth = latest_earth()
+except Exception:
+    earth = None
+
+sun_bucket = int(time.time() // 900)  # refresh the Sun every 15 minutes
+space_html = """
+<style>
+.live-space { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.live-space img { position: absolute; mix-blend-mode: screen; user-select: none; }
+.live-earth { left: -9vmax; bottom: -9vmax; width: 40vmax; max-width: 620px; opacity: .92;
+    filter: drop-shadow(0 0 40px rgba(90,150,255,.55)); animation: earthFloat 24s ease-in-out infinite; }
+.live-sun { right: -6vmax; top: -6vmax; width: 24vmax; max-width: 360px; opacity: .9;
+    filter: drop-shadow(0 0 50px rgba(255,140,60,.6)); animation: sunSpin 240s linear infinite; }
+.live-cap { position: fixed; left: 50%; bottom: 6px; transform: translateX(-50%); z-index: 2; pointer-events: none;
+    font: 11px/1.4 'DM Sans', sans-serif; letter-spacing: .04em; color: rgba(215,225,255,.62); text-align: center;
+    text-shadow: 0 0 8px rgba(0,0,0,.8); white-space: nowrap; }
+.live-cap i { display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%;
+    background: #ff5a7a; box-shadow: 0 0 8px #ff5a7a; animation: livePulse 1.6s ease-in-out infinite; vertical-align: 1px; }
+@keyframes earthFloat { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(14px,-10px) rotate(3deg); } }
+@keyframes sunSpin { to { transform: rotate(360deg); } }
+@keyframes livePulse { 50% { opacity: .25; } }
+@media (max-width: 600px) { .live-cap { font-size: 9.5px; } }
+</style>
+<div class="live-space">
+  __EARTH_IMG__
+  <img class="live-sun" alt="" src="https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0304.jpg?t=__BUCKET__"
+       onerror="this.style.display='none'">
+</div>
+<div class="live-cap"><i></i>live from space &middot; __EARTH_CAP__the Sun by NASA SDO</div>
+"""
+space_html = (
+    space_html.replace(
+        "__EARTH_IMG__",
+        f'<img class="live-earth" alt="" src="{earth["url"]}" onerror="this.style.display=\'none\'">' if earth else "",
+    )
+    .replace("__EARTH_CAP__", f"Earth by NASA DSCOVR, {earth['when']} &middot; " if earth else "")
+    .replace("__BUCKET__", str(sun_bucket))
+)
+st.markdown(space_html, unsafe_allow_html=True)
+
 
 # ---- optional edit mode:  open the app with  ?edit=1  to upload photos ----
 if editing:
