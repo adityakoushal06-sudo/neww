@@ -64,7 +64,7 @@ PAGES = [
         "photo": "2.jpg",
         "pos": "50% 25%",
         "caption": "rude, but only for me",
-        "title": "My rude baby",
+        "title": "My rude little goblin",
         "text": (
             "You are rude, you are stubborn, you are chaos in the "
             "cutest way, and I love every bit of it. You are my "
