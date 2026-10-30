@@ -21,7 +21,7 @@ YOUR_NAME = "Yours, always"   # how you sign off (e.g. "Forever yours, Rahul")
 PAGES = [
     {
         "type": "welcome",
-        "eyebrow": "a little something for my little goblin \u2661",
+        "eyebrow": "a little something for my baby \u2661",
         "title": "Happy 19th, Prerana",
         "text": (
             "Miles apart, and still you're the closest person to my "
@@ -36,7 +36,7 @@ PAGES = [
         "type": "photo",
         "photo": "1.jpg",
         "pos": "50% 25%",
-        "caption": "my little goblin ♡",
+        "caption": "my love ♡",
         "title": "January, on Discord",
         "text": (
             "Back then, I had no one. Then in January you walked into my "
@@ -64,11 +64,11 @@ PAGES = [
         "photo": "2.jpg",
         "pos": "50% 25%",
         "caption": "rude, but only for me",
-        "title": "My rude little goblin",
+        "title": "My rude baby",
         "text": (
             "You are rude, you are stubborn, you are chaos in the "
-            "cutest way, and I love every bit of it. You are my little "
-            "goblin and nobody else gets to have that title.\n\n"
+            "cutest way, and I love every bit of it. You are my "
+            "baby and nobody else gets to have that title.\n\n"
             "And when you get mad at me, I feel broken. Nothing feels "
             "right until we are okay again, because I don't want anything "
             "in this world but you."
@@ -135,7 +135,7 @@ PAGES = [
             "Every day we have talked since January.",
             "Even your angry face. Especially your angry face.",
             "That you chose me.",
-            "Because you are you, my little goblin, and you're mine.",
+            "Because you are you, my love, and you're mine.",
         ],
     },
     {
@@ -187,7 +187,7 @@ PAGES = [
             "Until then, I love you more than words, more than this card, "
             "more than all the hearts on this screen.\n\n"
             "আমি তোমাকে ভালোবাসি, প্রেরণা. "
-            "Happy 19th Birthday, my little goblin. ♡"
+            "Happy 19th Birthday, my love. ♡"
         ),
     },
 ]
@@ -586,7 +586,7 @@ HTML = r"""
 
     <div class="cover" id="cover">
       <div class="face front">
-        <div class="ribbon"><div class="rt foil">happy birthday ♡ my little goblin ♡ happy birthday ♡ my little goblin ♡ happy birthday ♡ my little goblin ♡ happy birthday ♡ my little goblin ♡ happy birthday ♡ my little goblin ♡ happy birthday ♡ my little goblin ♡ </div></div>
+        <div class="ribbon"><div class="rt foil">happy birthday ♡ baby ♡ happy birthday ♡ baby ♡ happy birthday ♡ baby ♡ happy birthday ♡ baby ♡ happy birthday ♡ baby ♡ happy birthday ♡ baby ♡ </div></div>
         <div class="c-small foil">a card for you</div>
         <div class="c-big">Happy<br>Birthday</div>
         <svg class="c-heart" viewBox="0 0 24 24">
@@ -791,7 +791,7 @@ function confettiShower(ms = 3500) {
 }
 
 /* ───────── balloon shooting ───────── */
-const NOTES = ['I love you ♡', 'আমি তোমাকে ভালোবাসি', 'my little goblin', 'happy birthday!'];
+const NOTES = ['I love you ♡', 'আমি তোমাকে ভালোবাসি', 'my love', 'happy birthday!'];
 const BCOLORS = ['#e11d5a', '#e8b74a', '#ff85a8', '#e11d5a'];
 let actx = null;
 function audioCtx() { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); return actx; }
