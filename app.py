@@ -193,8 +193,34 @@ PAGES = [
 ]
 # ════════════════════════════════════════════════════════════════
 
-PHOTO_DIR = Path(__file__).parent / "photos"
+APP_DIR = Path(__file__).parent
+
+
+def _find_photo_dir():
+    # works even if the folder is called Photos / photo / images on GitHub
+    for d in APP_DIR.iterdir():
+        if d.is_dir() and d.name.lower() in ("photos", "photo", "images"):
+            return d
+    return APP_DIR / "photos"
+
+
+PHOTO_DIR = _find_photo_dir()
 PHOTO_DIR.mkdir(exist_ok=True)
+MEDIA_EXT = {".jpg", ".jpeg", ".png", ".webp", ".mp4", ".webm", ".mov"}
+
+
+def _find_file(name):
+    # exact name first, then ignore capitals / extension (1.JPG, 1.jpeg ...),
+    # and also look next to app.py in case the files were uploaded there
+    stem = Path(name).stem.lower()
+    for folder in (PHOTO_DIR, APP_DIR):
+        exact = folder / name
+        if exact.is_file():
+            return exact
+        for f in folder.iterdir():
+            if f.is_file() and f.stem.lower() == stem and f.suffix.lower() in MEDIA_EXT:
+                return f
+    return None
 
 st.set_page_config(
     page_title="Happy Birthday ♡",
@@ -276,8 +302,8 @@ if editing:
 def photo_to_data_uri(name):
     if not name:
         return None
-    p = PHOTO_DIR / name
-    if not p.exists():
+    p = _find_file(name)
+    if p is None:
         return None
     mime = mimetypes.guess_type(p.name)[0] or "image/jpeg"
     return f"data:{mime};base64,{base64.b64encode(p.read_bytes()).decode()}"
