@@ -1152,8 +1152,8 @@ function show(n) {
     '@keyframes bqPulse{50%{transform:scale(1.07)}}' +
     '@keyframes bqGrab{0%{transform:none;opacity:1}55%{transform:translateY(8vh) scale(1.5);opacity:1}100%{transform:translateY(14vh) scale(2.1);opacity:0}}' +
     '#kiss{position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden}' +
-    '#kiss .wash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,150,185,.38),rgba(225,29,90,.22) 70%,rgba(120,10,50,.18))}' +
-    '#kiss .lip{position:absolute;left:0;top:0;opacity:0;filter:drop-shadow(0 6px 14px rgba(120,0,40,.35)) drop-shadow(0 0 18px rgba(255,100,150,.5))}';
+    '#kiss .wash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,170,200,.30),rgba(225,29,90,.16) 70%,rgba(120,10,50,.14))}' +
+    '#kiss .lip{position:absolute;left:0;top:0;opacity:0;will-change:transform,opacity;filter:drop-shadow(0 4px 10px rgba(90,0,35,.3))}';
   document.head.appendChild(st);
 
   const rose = (cx, cy, r, c1, c2) =>
@@ -1183,17 +1183,19 @@ function show(n) {
   }
 
   const LIPS =
-    '<svg viewBox="0 0 100 70" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0" stop-color="#ff5c8a"/><stop offset="1" stop-color="#c4144d"/></linearGradient></defs>' +
-    '<path d="M4 36 C16 22 30 11 42 13 C46 14 48 17 50 19 C52 17 54 14 58 13 C70 11 84 22 96 36 C84 56 68 63 50 63 C32 63 16 56 4 36 Z" fill="url(#lg)"/>' +
-    '<path d="M4 36 C24 43 38 40 50 45 C62 40 76 43 96 36" fill="none" stroke="#8f0d39" stroke-width="2.2" stroke-linecap="round"/>' +
-    '<ellipse cx="50" cy="54" rx="20" ry="4.5" fill="#fff" opacity=".28"/><ellipse cx="32" cy="24" rx="9" ry="3" fill="#fff" opacity=".25" transform="rotate(-25 32 24)"/></svg>';
+    '<svg viewBox="0 0 100 64" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#e63a6e"/><stop offset="1" stop-color="#b8143f"/></linearGradient></defs>' +
+    '<path d="M3 33 C14 24 24 14 36 12 C42 11 46 14 50 18 C54 14 58 11 64 12 C76 14 86 24 97 33 C84 37.5 66 38.5 50 38.5 C34 38.5 16 37.5 3 33 Z" fill="url(#lg)"/>' +
+    '<path d="M4 34.5 C20 38.5 36 39.5 50 39.5 C64 39.5 80 38.5 96 34.5 C87 52 70 61 50 61 C30 61 13 52 4 34.5 Z" fill="url(#lg)"/>' +
+    '<g stroke="#ffb7cc" stroke-opacity=".22" stroke-width=".9" stroke-linecap="round" fill="none">' +
+    '<path d="M4 34 C22 39 38 40 50 40 C62 40 78 39 96 34" stroke="#8f0d39" stroke-opacity=".45" stroke-width="1.4"/><path d="M24 28 L26 35"/><path d="M36 22 L37 34"/><path d="M64 22 L63 34"/><path d="M76 28 L74 35"/>' +
+    '<path d="M28 44 L30 52"/><path d="M42 45 L43 56"/><path d="M58 45 L57 56"/><path d="M72 44 L70 52"/></g></svg>';
 
   function kissSound() {
     try {
       const a = audioCtx(), t = a.currentTime, o = a.createOscillator(), g = a.createGain();
       o.type = 'sine'; o.frequency.setValueAtTime(700, t); o.frequency.exponentialRampToValueAtTime(260, t + .12);
-      g.gain.setValueAtTime(.001, t); g.gain.exponentialRampToValueAtTime(.16, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + .16);
+      g.gain.setValueAtTime(.001, t); g.gain.exponentialRampToValueAtTime(.09, t + .03); g.gain.exponentialRampToValueAtTime(.001, t + .16);
       o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + .18);
     } catch (e) {}
   }
@@ -1201,30 +1203,31 @@ function show(n) {
   function kisses() {
     const W = innerWidth, H = innerHeight, land = W > H;
     const cols = land ? 3 : 2, rows = land ? 2 : 3, cw = W / cols, ch = H / rows;
-    const lw = Math.min(cw * 1.35, (ch * 1.35) / .7);
+    const lw = Math.min(cw * 1.5, (ch * 1.55) / .64, 460);
     const layer = document.createElement('div'); layer.id = 'kiss';
     const wash = document.createElement('div'); wash.className = 'wash'; wash.style.opacity = 0;
     layer.appendChild(wash); document.body.appendChild(layer);
-    wash.animate([{ opacity: 0 }, { opacity: 1, offset: .16 }, { opacity: 1, offset: .7 }, { opacity: 0 }],
-      { duration: 2600, easing: 'ease-in-out', fill: 'forwards' });
+    const D = 3200, STEP = 110;
+    wash.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1, offset: .68 }, { opacity: 0 }],
+      { duration: D, easing: 'ease-in-out', fill: 'forwards' });
     const order = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - .5);
     order.forEach((cell, i) => {
       const c = cell % cols, r = Math.floor(cell / cols) % rows;
-      const x = c * cw + cw / 2 - lw / 2 + (Math.random() - .5) * cw * .22;
-      const y = r * ch + ch / 2 - lw * .35 + (Math.random() - .5) * ch * .18;
-      const rot = (Math.random() - .5) * 56;
+      const x = c * cw + cw / 2 - lw / 2 + (Math.random() - .5) * cw * .12;
+      const y = r * ch + ch / 2 - lw * .32 + (Math.random() - .5) * ch * .1;
+      const rot = (Math.random() - .5) * 36;
       const d = document.createElement('div'); d.className = 'lip';
-      d.style.cssText = 'width:' + lw + 'px;height:' + lw * .7 + 'px;left:' + x + 'px;top:' + y + 'px';
+      d.style.cssText = 'width:' + lw + 'px;height:' + lw * .64 + 'px;left:' + x + 'px;top:' + y + 'px';
       d.innerHTML = LIPS; layer.appendChild(d);
       d.animate([
-        { opacity: 0, transform: 'scale(.25) rotate(' + (rot - 22) + 'deg)' },
-        { opacity: 1, transform: 'scale(1.1) rotate(' + rot + 'deg)', offset: .14 },
-        { opacity: 1, transform: 'scale(1) rotate(' + rot + 'deg)', offset: .7 },
-        { opacity: 0, transform: 'scale(1.14) rotate(' + (rot + 4) + 'deg)' }
-      ], { duration: 2600, delay: i * 90, easing: 'cubic-bezier(.25,.8,.3,1)', fill: 'both' });
-      setTimeout(kissSound, i * 90 + 40);
+        { opacity: 0, transform: 'scale(.86) rotate(' + rot + 'deg)' },
+        { opacity: .94, transform: 'scale(1) rotate(' + rot + 'deg)', offset: .25 },
+        { opacity: .94, transform: 'scale(1.02) rotate(' + rot + 'deg)', offset: .7 },
+        { opacity: 0, transform: 'scale(1.06) rotate(' + rot + 'deg)' }
+      ], { duration: D, delay: i * STEP, easing: 'ease-in-out', fill: 'both' });
+      setTimeout(kissSound, i * STEP + 80);
     });
-    setTimeout(() => layer.remove(), 2600 + 6 * 90 + 100);
+    setTimeout(() => layer.remove(), D + 6 * STEP + 100);
   }
 
   window.bouquetMoment = function () {
