@@ -243,38 +243,63 @@ st.markdown(
     [data-testid="stDecoration"], [data-testid="stStatusWidget"] {{ display: none !important; }}
     .stApp {{
         background:
-            radial-gradient(ellipse 55% 40% at 14% 18%, rgba(225,29,90,.38), transparent 70%),
-            radial-gradient(ellipse 45% 38% at 86% 78%, rgba(255,150,120,.24), transparent 70%),
-            radial-gradient(ellipse 38% 30% at 74% 14%, rgba(170,60,140,.30), transparent 70%),
-            radial-gradient(ellipse 34% 26% at 22% 86%, rgba(255,120,170,.20), transparent 70%),
-            linear-gradient(118deg, transparent 34%, rgba(255,160,190,.09) 46%, rgba(255,215,130,.13) 50%, rgba(255,160,190,.09) 54%, transparent 66%),
-            radial-gradient(circle at 20% 10%, #5a1030 0%, #2a0716 45%, #14030b 100%);
+            /* distant tiny stars (static) */
+            radial-gradient(1px 1px at 12px 18px, rgba(255,255,255,.9), transparent),
+            radial-gradient(1px 1px at 70px 96px, rgba(190,210,255,.8), transparent),
+            radial-gradient(1px 1px at 128px 44px, rgba(255,240,220,.8), transparent),
+            radial-gradient(1px 1px at 40px 150px, rgba(255,255,255,.7), transparent),
+            radial-gradient(1px 1px at 170px 120px, rgba(200,190,255,.8), transparent),
+            radial-gradient(1px 1px at 95px 170px, rgba(255,255,255,.6), transparent),
+            radial-gradient(1px 1px at 20px 60px, rgba(255,255,255,.7), transparent),
+            radial-gradient(1px 1px at 210px 30px, rgba(255,230,200,.8), transparent),
+            radial-gradient(1px 1px at 150px 230px, rgba(255,255,255,.7), transparent),
+            radial-gradient(1px 1px at 250px 180px, rgba(190,220,255,.8), transparent),
+            /* ringed planet + moon glow */
+            radial-gradient(circle 46px at 91% 90%, #ffe2b8 0%, #d98a6a 45%, #6a2c58 78%, transparent 80%),
+            radial-gradient(circle 120px at 91% 90%, rgba(255,160,130,.20), transparent 70%),
+            radial-gradient(circle 26px at 9% 9%, #fffbe8 0%, #e9e2c8 55%, transparent 58%),
+            radial-gradient(circle 90px at 9% 9%, rgba(255,250,220,.18), transparent 70%),
+            /* nebula clouds */
+            radial-gradient(ellipse 60% 42% at 12% 22%, rgba(122,62,210,.42), transparent 70%),
+            radial-gradient(ellipse 50% 40% at 88% 30%, rgba(40,100,235,.34), transparent 70%),
+            radial-gradient(ellipse 46% 34% at 72% 82%, rgba(214,60,160,.26), transparent 70%),
+            radial-gradient(ellipse 40% 30% at 20% 84%, rgba(30,170,210,.20), transparent 70%),
+            /* milky way band */
+            linear-gradient(122deg, transparent 28%, rgba(170,160,255,.07) 41%, rgba(255,232,205,.13) 50%, rgba(170,160,255,.07) 59%, transparent 72%),
+            /* deep space base */
+            radial-gradient(ellipse at 50% 115%, #1d1250 0%, #0b0a26 48%, #02020b 100%);
+        background-size:
+            180px 180px, 230px 230px, 260px 260px, 200px 200px, 300px 300px,
+            340px 340px, 280px 280px, 360px 360px, 420px 420px, 380px 380px,
+            auto, auto, auto, auto, auto, auto, auto, auto, auto, auto;
     }}
     .stApp::before {{
         content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
         background-image:
-            radial-gradient(1.2px 1.2px at 20px 30px, #fff, transparent),
-            radial-gradient(1px 1px at 90px 140px, #ffe3b0, transparent),
-            radial-gradient(1.5px 1.5px at 160px 70px, #fff, transparent),
-            radial-gradient(1px 1px at 50px 90px, #ffd9e4, transparent),
-            radial-gradient(1.3px 1.3px at 210px 190px, #fff, transparent),
-            radial-gradient(1px 1px at 130px 250px, #ffe3b0, transparent),
-            radial-gradient(1.8px 1.8px at 120px 40px, #fff1b8, transparent),
-            radial-gradient(2.2px 2.2px at 330px 260px, #fff, transparent);
-        background-size: 220px 220px, 220px 220px, 220px 220px, 330px 330px, 330px 330px, 330px 330px, 470px 470px, 470px 470px;
-        animation: twinkleBg 5s ease-in-out infinite alternate;
+            radial-gradient(1.6px 1.6px at 40px 50px, #fff, transparent),
+            radial-gradient(2px 2px at 160px 110px, #cfe0ff, transparent),
+            radial-gradient(1.4px 1.4px at 90px 200px, #fff4d6, transparent),
+            radial-gradient(2.4px 2.4px at 270px 70px, #fff, transparent),
+            radial-gradient(1.8px 1.8px at 220px 250px, #ffd9ef, transparent),
+            radial-gradient(2.8px 2.8px at 360px 170px, #fff, transparent),
+            radial-gradient(2px 2px at 420px 300px, #d6ccff, transparent);
+        background-size: 240px 240px, 320px 320px, 280px 280px, 400px 400px, 360px 360px, 520px 520px, 480px 480px;
+        animation: twinkleBg 4s ease-in-out infinite alternate;
     }}
     .stApp::after {{
-        content: ""; position: fixed; top: 12%; left: -10%; width: 150px; height: 2px; z-index: 0; pointer-events: none;
-        background: linear-gradient(90deg, transparent, #fff1b8);
-        border-radius: 2px; opacity: 0;
-        animation: shootBg 11s ease-in infinite;
+        content: ""; position: fixed; top: 0; left: 0; width: 170px; height: 2px; z-index: 0; pointer-events: none;
+        background: linear-gradient(90deg, transparent, #cfe0ff 70%, #fff);
+        border-radius: 2px; opacity: 0; box-shadow: 0 0 8px rgba(190,210,255,.8);
+        animation: shootBg 13s ease-in infinite;
     }}
-    @keyframes twinkleBg {{ from {{ opacity: .55; }} to {{ opacity: 1; }} }}
+    @keyframes twinkleBg {{ from {{ opacity: .45; }} to {{ opacity: 1; }} }}
     @keyframes shootBg {{
-        0%, 88% {{ opacity: 0; transform: translate(0, 0) rotate(25deg); }}
-        90% {{ opacity: 1; }}
-        100% {{ opacity: 0; transform: translate(120vw, 56vw) rotate(25deg); }}
+        0%, 100% {{ opacity: 0; transform: translate(10vw, 8vh) rotate(25deg); }}
+        3% {{ opacity: 1; }}
+        8% {{ opacity: 0; transform: translate(70vw, 40vh) rotate(25deg); }}
+        8.1%, 52% {{ opacity: 0; transform: translate(60vw, -4vh) rotate(28deg); }}
+        54% {{ opacity: 1; }}
+        60% {{ opacity: 0; transform: translate(105vw, 36vh) rotate(28deg); }}
     }}
     .block-container {{ position: relative; z-index: 1; }}
     .block-container {{ padding: 0.5rem 0 0 0 !important; max-width: 760px !important; }}
@@ -355,8 +380,8 @@ HTML = r"""
 
   .glow{position:absolute;inset:0;pointer-events:none;
     background:
-      radial-gradient(circle at 15% 20%,rgba(255,120,170,.18),transparent 40%),
-      radial-gradient(circle at 85% 80%,rgba(255,190,120,.14),transparent 45%);}
+      radial-gradient(circle at 15% 20%,rgba(140,90,255,.20),transparent 40%),
+      radial-gradient(circle at 85% 80%,rgba(70,140,255,.16),transparent 45%);}
 
   #fx{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
   .heart{position:absolute;left:0;top:0;will-change:transform,opacity;filter:drop-shadow(0 2px 6px rgba(255,60,120,.35))}
@@ -494,9 +519,9 @@ HTML = r"""
   @keyframes ring{to{--a:360deg}}
 
   .orb{position:absolute;width:300px;height:300px;border-radius:50%;pointer-events:none;filter:blur(30px);opacity:.6}
-  .orb.o1{left:calc(50% - 280px);top:6%;background:radial-gradient(circle,rgba(225,29,90,.65),transparent 68%);animation:drift1 9s ease-in-out infinite}
-  .orb.o2{left:calc(50% - 20px);bottom:2%;background:radial-gradient(circle,rgba(232,183,74,.5),transparent 68%);animation:drift2 11s ease-in-out infinite}
-  .orb.o3{left:calc(50% - 150px);top:36%;background:radial-gradient(circle,rgba(255,133,168,.5),transparent 68%);animation:drift1 13s ease-in-out infinite reverse}
+  .orb.o1{left:calc(50% - 280px);top:6%;background:radial-gradient(circle,rgba(130,80,240,.60),transparent 68%);animation:drift1 9s ease-in-out infinite}
+  .orb.o2{left:calc(50% - 20px);bottom:2%;background:radial-gradient(circle,rgba(60,130,240,.45),transparent 68%);animation:drift2 11s ease-in-out infinite}
+  .orb.o3{left:calc(50% - 150px);top:36%;background:radial-gradient(circle,rgba(220,80,170,.40),transparent 68%);animation:drift1 13s ease-in-out infinite reverse}
   @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,60px) scale(1.25)}}
   @keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-50px,-60px) scale(.85)}}
 
@@ -614,11 +639,12 @@ document.getElementById('sealn').textContent = DATA.age;
 /* twinkling stars */
 (function () {
   const stage = document.querySelector('.stage');
-  for (let i = 0; i < 50; i++) {
+  const tints = ['#fff', '#fff', '#cfe0ff', '#fff4d6', '#ffd9ef', '#d6ccff'];
+  for (let i = 0; i < 120; i++) {
     const s = document.createElement('div');
     s.className = 'star';
-    const z = 1 + Math.random() * 2;
-    s.style.cssText = 'left:' + Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;width:' + z + 'px;height:' + z + 'px;animation-delay:' + (Math.random() * 3) + 's;animation-duration:' + (2 + Math.random() * 3) + 's';
+    const z = 1 + Math.random() * 2.2;
+    s.style.cssText = 'left:' + Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;width:' + z + 'px;height:' + z + 'px;background:' + tints[(Math.random() * tints.length) | 0] + ';box-shadow:0 0 ' + (z * 2) + 'px rgba(200,215,255,.8);animation-delay:' + (Math.random() * 3) + 's;animation-duration:' + (2 + Math.random() * 3) + 's';
     stage.insertBefore(s, stage.firstChild);
   }
 })();
